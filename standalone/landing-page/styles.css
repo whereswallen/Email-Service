@@ -24,17 +24,20 @@
   --glass-radius-pill: 100px;
 
   /* Shadows — layered for depth */
+  /* Shadows — layered: outer depth + hard specular top edge + subtle bottom edge */
   --glass-shadow:
-    0 8px 32px rgba(0, 0, 0, 0.25),
-    0 2px 8px rgba(0, 0, 0, 0.15),
-    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    0 2px 8px rgba(0, 0, 0, 0.2),
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.7),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.06);
   --glass-shadow-elevated:
-    0 16px 48px rgba(0, 0, 0, 0.3),
-    0 4px 16px rgba(0, 0, 0, 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    0 16px 48px rgba(0, 0, 0, 0.35),
+    0 4px 16px rgba(0, 0, 0, 0.25),
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.8),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.08);
   --glass-shadow-subtle:
-    0 4px 16px rgba(0, 0, 0, 0.15),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    0 4px 16px rgba(0, 0, 0, 0.2),
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.5);
 
   /* Accent gradient */
   --accent-gradient: linear-gradient(135deg, #6dd5fa 0%, #2980b9 50%, #a855f7 100%);
@@ -172,17 +175,35 @@ body {
   content: '';
   position: absolute;
   top: 0;
-  left: 10%;
-  right: 10%;
+  left: 5%;
+  right: 5%;
   height: 1px;
   background: linear-gradient(90deg,
     transparent,
-    rgba(255, 255, 255, 0.4) 30%,
-    rgba(255, 255, 255, 0.6) 50%,
-    rgba(255, 255, 255, 0.4) 70%,
+    rgba(255, 255, 255, 0.5) 25%,
+    rgba(255, 255, 255, 0.7) 50%,
+    rgba(255, 255, 255, 0.5) 75%,
     transparent
   );
+  z-index: 2;
   pointer-events: none;
+}
+
+/* Directional shine overlay — simulates light hitting the glass surface */
+.glass-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.12) 0%,
+    rgba(255, 255, 255, 0.04) 40%,
+    transparent 70%
+  );
+  mix-blend-mode: overlay;
 }
 
 .glass-card:hover {
@@ -473,9 +494,10 @@ section h2 {
   background: rgba(255, 255, 255, 0.12);
   border-color: rgba(109, 213, 250, 0.3);
   box-shadow:
-    0 8px 32px rgba(0, 0, 0, 0.25),
-    0 2px 8px rgba(0, 0, 0, 0.15),
-    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    0 2px 8px rgba(0, 0, 0, 0.2),
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.8),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.08),
     0 0 60px rgba(109, 213, 250, 0.08);
 }
 
@@ -744,5 +766,59 @@ footer {
 
   .pricing-card {
     padding: 2rem 1.5rem;
+  }
+}
+
+
+/* ============================================
+   Accessibility Fallbacks
+   ============================================ */
+
+/* Fallback for browsers without backdrop-filter support */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass-card,
+  .glass-nav {
+    background: rgba(15, 15, 30, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+  }
+
+  .glass-card::after {
+    display: none;
+  }
+}
+
+/* Respect "Reduce Transparency" preference */
+@media (prefers-reduced-transparency: reduce) {
+  .glass-card,
+  .glass-nav,
+  .glass-pill {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: rgba(20, 20, 35, 0.9);
+  }
+
+  .bg-orbs {
+    display: none;
+  }
+}
+
+/* Respect "Reduce Motion" preference */
+@media (prefers-reduced-motion: reduce) {
+  .orb {
+    animation: none;
+  }
+
+  .glass-card,
+  .btn,
+  .signup-card input {
+    transition: none;
+  }
+
+  .glass-card:hover {
+    transform: none;
+  }
+
+  .btn-primary:hover {
+    transform: none;
   }
 }
