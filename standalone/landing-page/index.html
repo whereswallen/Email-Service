@@ -7,116 +7,191 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <header>
+
+  <!-- Ambient background orbs for glass refraction effect -->
+  <div class="bg-orbs" aria-hidden="true">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <div class="orb orb-4"></div>
+  </div>
+
+  <nav class="glass-nav">
+    <div class="container nav-inner">
+      <!-- TODO: Replace with your brand name -->
+      <a href="#" class="logo">[Your Brand]</a>
+      <div class="nav-links">
+        <a href="#features">Features</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#signup" class="btn btn-nav">Get Started</a>
+      </div>
+    </div>
+  </nav>
+
+  <header class="hero">
     <div class="container">
-      <!-- TODO: Replace with your brand name and domain once chosen -->
-      <h1>[Your Brand] Email</h1>
-      <p class="tagline">Professional email for your business. Simple, reliable, affordable.</p>
+      <div class="hero-badge glass-pill">Professional Email Hosting</div>
+      <h1>Your business deserves<br><span class="gradient-text">a real email address</span></h1>
+      <p class="hero-sub">Get <code>you@yourbusiness.com</code> &mdash; simple, reliable, and half the price of Google Workspace.</p>
+      <div class="hero-actions">
+        <a href="#signup" class="btn btn-primary btn-lg">Start Free Setup</a>
+        <a href="#pricing" class="btn btn-glass btn-lg">View Pricing</a>
+      </div>
     </div>
   </header>
 
-  <main class="container">
-    <section class="value-prop">
-      <h2>Get <code>you@yourbusiness.com</code></h2>
-      <p>Look professional with email on your own domain. No technical knowledge required &mdash; we handle everything.</p>
+  <main>
+    <section id="features" class="features">
+      <div class="container">
+        <h2>Everything you need. Nothing you don't.</h2>
+        <div class="feature-grid">
+          <div class="glass-card feature-card">
+            <div class="feature-icon">&#9993;</div>
+            <h3>Custom Domain</h3>
+            <p>Send and receive as <strong>you@yourbusiness.com</strong>. Look professional from day one.</p>
+          </div>
+          <div class="glass-card feature-card">
+            <div class="feature-icon">&#128737;</div>
+            <h3>Spam &amp; Virus Protection</h3>
+            <p>Enterprise-grade filtering keeps your inbox clean and your business safe.</p>
+          </div>
+          <div class="glass-card feature-card">
+            <div class="feature-icon">&#128274;</div>
+            <h3>Fully Authenticated</h3>
+            <p>SPF, DKIM, and DMARC configured out of the box. Your emails land in inboxes, not spam.</p>
+          </div>
+          <div class="glass-card feature-card">
+            <div class="feature-icon">&#128241;</div>
+            <h3>Works Everywhere</h3>
+            <p>Webmail, iPhone, Android, Outlook, Thunderbird &mdash; use any app you prefer.</p>
+          </div>
+        </div>
+      </div>
     </section>
 
-    <section class="pricing">
-      <h2>Pricing</h2>
-      <div class="pricing-cards">
-        <div class="card">
-          <h3>Starter</h3>
-          <div class="price">$4<span>/mailbox/month</span></div>
-          <ul>
-            <li>5 GB storage per mailbox</li>
-            <li>Spam &amp; virus protection</li>
-            <li>Webmail access</li>
-            <li>Works with any email app</li>
-            <li>SPF, DKIM, DMARC included</li>
-          </ul>
-          <a href="#signup" class="btn">Get Started</a>
-        </div>
+    <section id="pricing" class="pricing">
+      <div class="container">
+        <h2>Simple, honest pricing</h2>
+        <p class="section-sub">No contracts. No hidden fees. Cancel anytime.</p>
+        <div class="pricing-cards">
+          <div class="glass-card pricing-card">
+            <h3>Starter</h3>
+            <div class="price">$4<span>/mailbox/mo</span></div>
+            <ul>
+              <li><span class="check">&#10003;</span> 5 GB storage per mailbox</li>
+              <li><span class="check">&#10003;</span> Spam &amp; virus protection</li>
+              <li><span class="check">&#10003;</span> Webmail access</li>
+              <li><span class="check">&#10003;</span> Any email app</li>
+              <li><span class="check">&#10003;</span> SPF, DKIM, DMARC</li>
+              <li><span class="check">&#10003;</span> Free setup assistance</li>
+            </ul>
+            <a href="#signup" class="btn btn-glass btn-full">Get Started</a>
+          </div>
 
-        <div class="card featured">
-          <h3>Business</h3>
-          <div class="price">$3.50<span>/mailbox/month</span></div>
-          <p class="card-note">5+ mailboxes</p>
-          <ul>
-            <li>Everything in Starter</li>
-            <li>Volume discount</li>
-            <li>Priority support</li>
-            <li>Custom aliases (info@, team@, etc.)</li>
-          </ul>
-          <a href="#signup" class="btn btn-primary">Get Started</a>
+          <div class="glass-card pricing-card featured">
+            <div class="card-badge glass-pill">Best Value</div>
+            <h3>Business</h3>
+            <div class="price">$3.50<span>/mailbox/mo</span></div>
+            <p class="card-note">5+ mailboxes</p>
+            <ul>
+              <li><span class="check">&#10003;</span> Everything in Starter</li>
+              <li><span class="check">&#10003;</span> Volume discount</li>
+              <li><span class="check">&#10003;</span> Priority support</li>
+              <li><span class="check">&#10003;</span> Unlimited aliases</li>
+              <li><span class="check">&#10003;</span> Team onboarding</li>
+              <li><span class="check">&#10003;</span> DNS setup done for you</li>
+            </ul>
+            <a href="#signup" class="btn btn-primary btn-full">Get Started</a>
+          </div>
         </div>
       </div>
     </section>
 
     <section class="comparison">
-      <h2>Compare</h2>
-      <table>
-        <thead>
-          <tr>
-            <th></th>
-            <th>[Your Brand]</th>
-            <th>Google Workspace</th>
-            <th>Microsoft 365</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Price per mailbox</td>
-            <td><strong>$3.50-4/mo</strong></td>
-            <td>$7/mo</td>
-            <td>$6/mo</td>
-          </tr>
-          <tr>
-            <td>Custom domain email</td>
-            <td>Yes</td>
-            <td>Yes</td>
-            <td>Yes</td>
-          </tr>
-          <tr>
-            <td>Spam protection</td>
-            <td>Yes</td>
-            <td>Yes</td>
-            <td>Yes</td>
-          </tr>
-          <tr>
-            <td>Webmail</td>
-            <td>Yes</td>
-            <td>Gmail</td>
-            <td>Outlook</td>
-          </tr>
-          <tr>
-            <td>Setup help included</td>
-            <td><strong>Yes</strong></td>
-            <td>No</td>
-            <td>No</td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="container">
+        <h2>Compare and save</h2>
+        <div class="glass-card table-card">
+          <table>
+            <thead>
+              <tr>
+                <th></th>
+                <!-- TODO: Replace with your brand -->
+                <th class="highlight-col">[Your Brand]</th>
+                <th>Google Workspace</th>
+                <th>Microsoft 365</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Price per mailbox</td>
+                <td class="highlight-col"><strong>$3.50&ndash;4/mo</strong></td>
+                <td>$7/mo</td>
+                <td>$6/mo</td>
+              </tr>
+              <tr>
+                <td>Custom domain email</td>
+                <td class="highlight-col">Yes</td>
+                <td>Yes</td>
+                <td>Yes</td>
+              </tr>
+              <tr>
+                <td>Spam protection</td>
+                <td class="highlight-col">Yes</td>
+                <td>Yes</td>
+                <td>Yes</td>
+              </tr>
+              <tr>
+                <td>Webmail</td>
+                <td class="highlight-col">Yes</td>
+                <td>Yes</td>
+                <td>Yes</td>
+              </tr>
+              <tr>
+                <td>Free setup help</td>
+                <td class="highlight-col"><strong>Yes</strong></td>
+                <td>No</td>
+                <td>No</td>
+              </tr>
+              <tr>
+                <td>Annual savings (10 users)</td>
+                <td class="highlight-col"><strong>$420/yr</strong></td>
+                <td>$840/yr</td>
+                <td>$720/yr</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </section>
 
-    <section id="signup" class="signup">
-      <h2>Get Started</h2>
-      <p>Tell us about your business and we'll have your email set up within 24 hours.</p>
-      <!-- TODO: Connect to Stripe checkout or a form handler -->
-      <form action="#" method="POST">
-        <input type="text" name="business_name" placeholder="Business name" required>
-        <input type="text" name="domain" placeholder="Your domain (e.g., yourbusiness.com)" required>
-        <input type="email" name="contact_email" placeholder="Current email (for setup instructions)" required>
-        <input type="number" name="mailboxes" placeholder="Number of mailboxes" min="1" value="1" required>
-        <button type="submit" class="btn btn-primary">Start Setup</button>
-      </form>
+    <section id="signup" class="signup-section">
+      <div class="container">
+        <div class="glass-card signup-card">
+          <h2>Get started in minutes</h2>
+          <p>Tell us about your business. We'll have your email running within 24 hours.</p>
+          <!-- TODO: Connect to Stripe checkout or a form handler -->
+          <form action="#" method="POST">
+            <div class="form-row">
+              <input type="text" name="business_name" placeholder="Business name" required>
+              <input type="text" name="domain" placeholder="yourbusiness.com" required>
+            </div>
+            <div class="form-row">
+              <input type="email" name="contact_email" placeholder="Your current email" required>
+              <input type="number" name="mailboxes" placeholder="Mailboxes needed" min="1" value="1" required>
+            </div>
+            <button type="submit" class="btn btn-primary btn-lg btn-full">Start Free Setup</button>
+          </form>
+        </div>
+      </div>
     </section>
   </main>
 
   <footer>
     <div class="container">
       <!-- TODO: Replace with your brand -->
-      <p>&copy; 2026 [Your Brand]. Professional email hosting.</p>
+      <p>&copy; 2026 [Your Brand]. Professional email hosting for small businesses.</p>
     </div>
   </footer>
+
 </body>
 </html>
