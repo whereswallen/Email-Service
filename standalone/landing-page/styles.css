@@ -1,0 +1,205 @@
+/* Minimal landing page styles — replace with your brand colors */
+
+:root {
+  --primary: #2563eb;
+  --primary-dark: #1d4ed8;
+  --bg: #ffffff;
+  --bg-alt: #f8fafc;
+  --text: #1e293b;
+  --text-muted: #64748b;
+  --border: #e2e8f0;
+  --radius: 8px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  color: var(--text);
+  line-height: 1.6;
+}
+
+.container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+/* Header */
+header {
+  background: var(--primary);
+  color: white;
+  padding: 4rem 0;
+  text-align: center;
+}
+
+header h1 {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.tagline {
+  font-size: 1.25rem;
+  opacity: 0.9;
+}
+
+/* Sections */
+section {
+  padding: 3rem 0;
+}
+
+section h2 {
+  font-size: 1.75rem;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+/* Value prop */
+.value-prop {
+  text-align: center;
+  background: var(--bg-alt);
+  padding: 3rem 1.5rem;
+}
+
+.value-prop code {
+  background: var(--primary);
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 1.1em;
+}
+
+/* Pricing cards */
+.pricing-cards {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 2rem;
+}
+
+.card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 2rem;
+  width: 300px;
+  text-align: center;
+}
+
+.card.featured {
+  border-color: var(--primary);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
+}
+
+.card h3 {
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.price {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 0.5rem;
+}
+
+.price span {
+  font-size: 0.9rem;
+  font-weight: 400;
+  color: var(--text-muted);
+}
+
+.card-note {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 1rem;
+}
+
+.card ul {
+  list-style: none;
+  margin: 1.5rem 0;
+  text-align: left;
+}
+
+.card li {
+  padding: 0.35rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.card li:last-child {
+  border-bottom: none;
+}
+
+/* Buttons */
+.btn {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius);
+  text-decoration: none;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid var(--primary);
+  color: var(--primary);
+  background: transparent;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: white;
+}
+
+.btn-primary:hover {
+  background: var(--primary-dark);
+}
+
+/* Comparison table */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1.5rem;
+}
+
+th, td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+th {
+  font-weight: 600;
+  background: var(--bg-alt);
+}
+
+/* Signup form */
+.signup {
+  background: var(--bg-alt);
+  padding: 3rem 1.5rem;
+  text-align: center;
+}
+
+.signup form {
+  max-width: 400px;
+  margin: 1.5rem auto 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.signup input {
+  padding: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 1rem;
+}
+
+/* Footer */
+footer {
+  padding: 2rem 0;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}

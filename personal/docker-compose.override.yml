@@ -1,0 +1,20 @@
+# Mailcow Docker Compose Override
+#
+# This file customizes the default Mailcow configuration.
+# Place this alongside Mailcow's own docker-compose.yml after cloning:
+#   git clone https://github.com/mailcow/mailcow-dockerized
+#
+# The base Mailcow compose file handles all services (Postfix, Dovecot,
+# SOGo, Rspamd, ClamAV, Nginx, MariaDB, Solr, Unbound, etc.)
+#
+# Use this override for custom settings only.
+
+services:
+  # Example: Limit ClamAV memory on smaller VPS
+  clamd-mailcow:
+    mem_limit: 1g
+
+  # Example: Custom Rspamd overrides
+  # rspamd-mailcow:
+  #   volumes:
+  #     - ./config/rspamd/local.d:/etc/rspamd/local.d:ro
