@@ -1,0 +1,824 @@
+/*
+ * Apple Liquid Glass Theme
+ *
+ * Inspired by Apple's Liquid Glass design language (WWDC 2025).
+ * Three-layer glass system: highlight, shadow, illumination.
+ * Frosted translucent panels with backdrop blur, specular highlights,
+ * and layered shadows on a rich gradient background.
+ */
+
+/* ============================================
+   Design Tokens
+   ============================================ */
+
+:root {
+  /* Glass properties */
+  --glass-bg: rgba(255, 255, 255, 0.08);
+  --glass-bg-hover: rgba(255, 255, 255, 0.12);
+  --glass-border: rgba(255, 255, 255, 0.18);
+  --glass-border-bright: rgba(255, 255, 255, 0.35);
+  --glass-blur: 20px;
+  --glass-saturate: 180%;
+  --glass-radius: 24px;
+  --glass-radius-sm: 16px;
+  --glass-radius-pill: 100px;
+
+  /* Shadows — layered for depth */
+  /* Shadows — layered: outer depth + hard specular top edge + subtle bottom edge */
+  --glass-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    0 2px 8px rgba(0, 0, 0, 0.2),
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.7),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.06);
+  --glass-shadow-elevated:
+    0 16px 48px rgba(0, 0, 0, 0.35),
+    0 4px 16px rgba(0, 0, 0, 0.25),
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.8),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.08);
+  --glass-shadow-subtle:
+    0 4px 16px rgba(0, 0, 0, 0.2),
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.5);
+
+  /* Accent gradient */
+  --accent-gradient: linear-gradient(135deg, #6dd5fa 0%, #2980b9 50%, #a855f7 100%);
+  --accent-solid: #6dd5fa;
+  --accent-hover: #5bc0e8;
+
+  /* Text */
+  --text-primary: rgba(255, 255, 255, 0.95);
+  --text-secondary: rgba(255, 255, 255, 0.65);
+  --text-tertiary: rgba(255, 255, 255, 0.4);
+
+  /* Background */
+  --bg-gradient: linear-gradient(160deg, #0a0a1a 0%, #0d1b2a 30%, #1b2a4a 60%, #162033 100%);
+}
+
+
+/* ============================================
+   Reset & Base
+   ============================================ */
+
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
+               "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color: var(--text-primary);
+  line-height: 1.6;
+  background: var(--bg-gradient);
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.container {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+
+/* ============================================
+   Ambient Background Orbs
+   ============================================ */
+
+.bg-orbs {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.4;
+  animation: orb-drift 20s ease-in-out infinite alternate;
+}
+
+.orb-1 {
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, #2980b9, transparent 70%);
+  top: -10%;
+  left: -5%;
+  animation-duration: 25s;
+}
+
+.orb-2 {
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, #a855f7, transparent 70%);
+  top: 40%;
+  right: -8%;
+  animation-duration: 30s;
+  animation-delay: -5s;
+}
+
+.orb-3 {
+  width: 350px;
+  height: 350px;
+  background: radial-gradient(circle, #6dd5fa, transparent 70%);
+  bottom: 10%;
+  left: 20%;
+  animation-duration: 22s;
+  animation-delay: -10s;
+}
+
+.orb-4 {
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, #1b6ca8, transparent 70%);
+  top: 20%;
+  left: 50%;
+  animation-duration: 28s;
+  animation-delay: -8s;
+}
+
+@keyframes orb-drift {
+  0%   { transform: translate(0, 0) scale(1); }
+  33%  { transform: translate(30px, -20px) scale(1.05); }
+  66%  { transform: translate(-20px, 15px) scale(0.95); }
+  100% { transform: translate(10px, -10px) scale(1.02); }
+}
+
+
+/* ============================================
+   Glass Components
+   ============================================ */
+
+.glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  border: 1px solid var(--glass-border);
+  border-radius: var(--glass-radius);
+  box-shadow: var(--glass-shadow);
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+/* Specular highlight — top edge light reflection */
+.glass-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 5%;
+  right: 5%;
+  height: 1px;
+  background: linear-gradient(90deg,
+    transparent,
+    rgba(255, 255, 255, 0.5) 25%,
+    rgba(255, 255, 255, 0.7) 50%,
+    rgba(255, 255, 255, 0.5) 75%,
+    transparent
+  );
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* Directional shine overlay — simulates light hitting the glass surface */
+.glass-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.12) 0%,
+    rgba(255, 255, 255, 0.04) 40%,
+    transparent 70%
+  );
+  mix-blend-mode: overlay;
+}
+
+.glass-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--glass-shadow-elevated);
+  border-color: var(--glass-border-bright);
+}
+
+.glass-pill {
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(12px) saturate(160%);
+  -webkit-backdrop-filter: blur(12px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--glass-radius-pill);
+  padding: 0.35rem 1rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  color: var(--accent-solid);
+}
+
+
+/* ============================================
+   Navigation
+   ============================================ */
+
+.glass-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: rgba(10, 10, 26, 0.6);
+  backdrop-filter: blur(24px) saturate(200%);
+  -webkit-backdrop-filter: blur(24px) saturate(200%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.nav-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 64px;
+}
+
+.logo {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  text-decoration: none;
+  letter-spacing: -0.02em;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.nav-links a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.nav-links a:hover {
+  color: var(--text-primary);
+}
+
+.btn-nav {
+  color: var(--accent-solid) !important;
+  border: 1px solid rgba(109, 213, 250, 0.3);
+  border-radius: var(--glass-radius-pill);
+  padding: 0.4rem 1.2rem;
+  font-size: 0.85rem;
+  background: rgba(109, 213, 250, 0.08);
+  transition: all 0.2s ease;
+}
+
+.btn-nav:hover {
+  background: rgba(109, 213, 250, 0.15);
+  border-color: rgba(109, 213, 250, 0.5);
+}
+
+
+/* ============================================
+   Hero
+   ============================================ */
+
+.hero {
+  position: relative;
+  z-index: 1;
+  padding: 10rem 0 6rem;
+  text-align: center;
+}
+
+.hero-badge {
+  margin-bottom: 1.5rem;
+}
+
+.hero h1 {
+  font-size: clamp(2.5rem, 6vw, 4rem);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+  margin-bottom: 1.25rem;
+}
+
+.gradient-text {
+  background: var(--accent-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.hero-sub {
+  font-size: 1.2rem;
+  color: var(--text-secondary);
+  max-width: 540px;
+  margin: 0 auto 2.5rem;
+  line-height: 1.7;
+}
+
+.hero-sub code {
+  background: rgba(109, 213, 250, 0.15);
+  border: 1px solid rgba(109, 213, 250, 0.25);
+  color: var(--accent-solid);
+  padding: 0.15rem 0.5rem;
+  border-radius: 6px;
+  font-family: "SF Mono", "Fira Code", "Consolas", monospace;
+  font-size: 0.95em;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+
+/* ============================================
+   Buttons
+   ============================================ */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.7rem 1.5rem;
+  border-radius: var(--glass-radius-sm);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  border: none;
+  transition: all 0.25s ease;
+  letter-spacing: -0.01em;
+}
+
+.btn-primary {
+  background: var(--accent-gradient);
+  color: #fff;
+  box-shadow: 0 4px 20px rgba(109, 213, 250, 0.25), 0 1px 4px rgba(0, 0, 0, 0.2);
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 30px rgba(109, 213, 250, 0.35), 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+.btn-glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  border: 1px solid var(--glass-border);
+  color: var(--text-primary);
+  box-shadow: var(--glass-shadow-subtle);
+}
+
+.btn-glass:hover {
+  background: var(--glass-bg-hover);
+  border-color: var(--glass-border-bright);
+}
+
+.btn-lg {
+  padding: 0.85rem 2rem;
+  font-size: 1.05rem;
+  border-radius: var(--glass-radius-sm);
+}
+
+.btn-full {
+  width: 100%;
+}
+
+
+/* ============================================
+   Sections
+   ============================================ */
+
+section {
+  position: relative;
+  z-index: 1;
+  padding: 5rem 0;
+}
+
+section h2 {
+  font-size: clamp(1.75rem, 4vw, 2.25rem);
+  font-weight: 700;
+  text-align: center;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.5rem;
+}
+
+.section-sub {
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 1.05rem;
+  margin-bottom: 2.5rem;
+}
+
+
+/* ============================================
+   Features
+   ============================================ */
+
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.25rem;
+  margin-top: 2.5rem;
+}
+
+.feature-card {
+  padding: 2rem 1.5rem;
+  text-align: center;
+}
+
+.feature-icon {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  display: inline-block;
+  width: 56px;
+  height: 56px;
+  line-height: 56px;
+  border-radius: 16px;
+  background: rgba(109, 213, 250, 0.1);
+  border: 1px solid rgba(109, 213, 250, 0.15);
+}
+
+.feature-card h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.feature-card p {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+
+/* ============================================
+   Pricing
+   ============================================ */
+
+.pricing-cards {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+  align-items: stretch;
+  flex-wrap: wrap;
+  margin-top: 2.5rem;
+}
+
+.pricing-card {
+  padding: 2.5rem 2rem;
+  width: 340px;
+  text-align: center;
+  position: relative;
+}
+
+.pricing-card.featured {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(109, 213, 250, 0.3);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    0 2px 8px rgba(0, 0, 0, 0.2),
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.8),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.08),
+    0 0 60px rgba(109, 213, 250, 0.08);
+}
+
+/* Override specular highlight for featured card — brighter */
+.pricing-card.featured::before {
+  background: linear-gradient(90deg,
+    transparent,
+    rgba(109, 213, 250, 0.3) 30%,
+    rgba(109, 213, 250, 0.5) 50%,
+    rgba(109, 213, 250, 0.3) 70%,
+    transparent
+  );
+}
+
+.card-badge {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.pricing-card h3 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.price {
+  font-size: 3rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  margin-bottom: 0.25rem;
+  background: var(--accent-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.price span {
+  font-size: 0.9rem;
+  font-weight: 400;
+  -webkit-text-fill-color: var(--text-tertiary);
+}
+
+.card-note {
+  font-size: 0.85rem;
+  color: var(--text-tertiary);
+  margin-bottom: 0.5rem;
+}
+
+.pricing-card ul {
+  list-style: none;
+  margin: 1.5rem 0 2rem;
+  text-align: left;
+}
+
+.pricing-card li {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.pricing-card li:last-child {
+  border-bottom: none;
+}
+
+.check {
+  color: var(--accent-solid);
+  font-weight: 700;
+  font-size: 0.85rem;
+  flex-shrink: 0;
+}
+
+
+/* ============================================
+   Comparison Table
+   ============================================ */
+
+.table-card {
+  padding: 0;
+  overflow: hidden;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 0.9rem 1.25rem;
+  text-align: left;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  font-size: 0.9rem;
+}
+
+th {
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+td {
+  color: var(--text-secondary);
+}
+
+tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.highlight-col {
+  color: var(--text-primary) !important;
+  background: rgba(109, 213, 250, 0.05);
+}
+
+th.highlight-col {
+  color: var(--accent-solid) !important;
+}
+
+
+/* ============================================
+   Signup Form
+   ============================================ */
+
+.signup-section {
+  padding-bottom: 6rem;
+}
+
+.signup-card {
+  padding: 3rem;
+  max-width: 640px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.signup-card h2 {
+  margin-bottom: 0.5rem;
+}
+
+.signup-card > p {
+  color: var(--text-secondary);
+  margin-bottom: 2rem;
+}
+
+.signup-card form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.form-row {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.signup-card input {
+  flex: 1;
+  padding: 0.85rem 1rem;
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.signup-card input::placeholder {
+  color: var(--text-tertiary);
+}
+
+.signup-card input:focus {
+  border-color: rgba(109, 213, 250, 0.4);
+  background: rgba(255, 255, 255, 0.09);
+  box-shadow: 0 0 0 3px rgba(109, 213, 250, 0.1);
+}
+
+.signup-card .btn {
+  margin-top: 0.5rem;
+  font-family: inherit;
+}
+
+
+/* ============================================
+   Footer
+   ============================================ */
+
+footer {
+  position: relative;
+  z-index: 1;
+  padding: 2rem 0 3rem;
+  text-align: center;
+  color: var(--text-tertiary);
+  font-size: 0.85rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+
+/* ============================================
+   Responsive
+   ============================================ */
+
+@media (max-width: 768px) {
+  .hero {
+    padding: 8rem 0 4rem;
+  }
+
+  .hero h1 {
+    font-size: 2.2rem;
+  }
+
+  .feature-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .pricing-card {
+    width: 100%;
+    max-width: 380px;
+  }
+
+  .form-row {
+    flex-direction: column;
+  }
+
+  .signup-card {
+    padding: 2rem 1.5rem;
+  }
+
+  table {
+    font-size: 0.8rem;
+  }
+
+  th, td {
+    padding: 0.6rem 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .nav-links a:not(.btn-nav) {
+    display: none;
+  }
+
+  .feature-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hero h1 {
+    font-size: 1.8rem;
+  }
+
+  .hero-sub {
+    font-size: 1rem;
+  }
+
+  .pricing-card {
+    padding: 2rem 1.5rem;
+  }
+}
+
+
+/* ============================================
+   Accessibility Fallbacks
+   ============================================ */
+
+/* Fallback for browsers without backdrop-filter support */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass-card,
+  .glass-nav {
+    background: rgba(15, 15, 30, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+  }
+
+  .glass-card::after {
+    display: none;
+  }
+}
+
+/* Respect "Reduce Transparency" preference */
+@media (prefers-reduced-transparency: reduce) {
+  .glass-card,
+  .glass-nav,
+  .glass-pill {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: rgba(20, 20, 35, 0.9);
+  }
+
+  .bg-orbs {
+    display: none;
+  }
+}
+
+/* Respect "Reduce Motion" preference */
+@media (prefers-reduced-motion: reduce) {
+  .orb {
+    animation: none;
+  }
+
+  .glass-card,
+  .btn,
+  .signup-card input {
+    transition: none;
+  }
+
+  .glass-card:hover {
+    transform: none;
+  }
+
+  .btn-primary:hover {
+    transform: none;
+  }
+}

@@ -1,0 +1,45 @@
+# Environment and secrets
+.env
+.env.*
+!.env.example
+
+# OpenSRS credentials
+opensrs-credentials.json
+
+# TLS/SSL certificates and private keys
+*.pem
+*.key
+*.crt
+*.csr
+
+# DKIM keys
+dkim/
+
+# Mail data volumes
+mail-data/
+mail-state/
+mail-logs/
+
+# Docker volumes
+volumes/
+
+# Node modules (for SDK)
+node_modules/
+dist/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
+logs/
+
+# Backup files
+backups/
+*.tar.gz
+*.bak
