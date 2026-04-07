@@ -5,6 +5,7 @@
 import { FastifyInstance } from 'fastify';
 import { AuctionServiceAPI } from '../services/auction-service';
 import { getPool } from '../lib/db';
+import { publish } from '../lib/pubsub';
 
 export default async function auctionRoutes(app: FastifyInstance) {
   const service = new AuctionServiceAPI(getPool());
@@ -42,12 +43,26 @@ export default async function auctionRoutes(app: FastifyInstance) {
   app.post('/:id/bid', { preHandler: [app.authenticate] }, async (request) => {
     const { id } = request.params as { id: string };
     const { amount, maxBid } = request.body as { amount: number; maxBid?: number };
-    return service.placeBid({
+    const result = await service.placeBid({
       auctionId: id,
       bidderId: request.user.id,
       amount,
       maxBid,
     });
+
+    // Publish real-time event if bid succeeded
+    if (result.success) {
+      await publish(`auction:${id}`, {
+        type: result.auctionExtended ? 'auction_extended' : 'bid_placed',
+        auctionId: id,
+        currentPrice: result.currentPrice,
+        isHighBidder: result.isHighBidder,
+        auctionExtended: result.auctionExtended,
+        newEndTime: result.newEndTime,
+      });
+    }
+
+    return result;
   });
 
   // Get bid history

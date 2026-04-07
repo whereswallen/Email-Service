@@ -6,6 +6,7 @@ import Fastify from 'fastify';
 import { loadConfig } from './lib/config';
 import { closePool } from './lib/db';
 import { closeRedis } from './lib/redis';
+import { closePubSub } from './lib/pubsub';
 
 // Load config first (validates required env vars)
 const config = loadConfig();
@@ -17,6 +18,9 @@ app.register(import('@fastify/cors'), { origin: true });
 app.register(import('@fastify/rate-limit'), { max: 100, timeWindow: '1 minute' });
 app.register(import('./plugins/error-handler'));
 app.register(import('./plugins/auth'));
+
+// WebSocket support for real-time auction bids
+app.register(import('./websockets/auction-room'));
 
 // Public routes (no auth required)
 app.register(import('./routes/auth'), { prefix: '/api/auth' });
@@ -30,6 +34,9 @@ app.register(import('./routes/email'), { prefix: '/api/email' });
 app.register(import('./routes/billing'), { prefix: '/api/billing' });
 app.register(import('./routes/expired-domains'), { prefix: '/api/expired' });
 
+// WHOIS lookup (public, rate-limited)
+app.register(import('./routes/whois'), { prefix: '/api/whois' });
+
 // Health checks
 app.get('/health', async () => ({ status: 'ok', timestamp: new Date().toISOString() }));
 
@@ -37,6 +44,7 @@ app.get('/health', async () => ({ status: 'ok', timestamp: new Date().toISOStrin
 const shutdown = async () => {
   app.log.info('Shutting down...');
   await app.close();
+  await closePubSub();
   await closePool();
   await closeRedis();
   process.exit(0);
