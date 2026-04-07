@@ -1,0 +1,96 @@
+version: "3.8"
+
+services:
+  api:
+    build: ../api
+    ports:
+      - "3000:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      - DATABASE_URL=postgresql://platform:${DB_PASSWORD}@postgres:5432/domain_platform
+      - REDIS_URL=redis://redis:6379
+      - OPENSRS_API_USER=${OPENSRS_API_USER}
+      - OPENSRS_API_KEY=${OPENSRS_API_KEY}
+      - OPENSRS_API_URL=${OPENSRS_API_URL}
+      - EMAIL_PROVIDER=${EMAIL_PROVIDER}
+      - MAILCOW_API_URL=${MAILCOW_API_URL}
+      - MAILCOW_API_KEY=${MAILCOW_API_KEY}
+      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
+      - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET}
+      - JWT_SECRET=${JWT_SECRET}
+    restart: unless-stopped
+
+  worker:
+    build: ../api
+    command: ["node", "dist/src/jobs/worker.js"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      - DATABASE_URL=postgresql://platform:${DB_PASSWORD}@postgres:5432/domain_platform
+      - REDIS_URL=redis://redis:6379
+      - OPENSRS_API_USER=${OPENSRS_API_USER}
+      - OPENSRS_API_KEY=${OPENSRS_API_KEY}
+      - OPENSRS_API_URL=${OPENSRS_API_URL}
+      - EMAIL_PROVIDER=${EMAIL_PROVIDER}
+      - MAILCOW_API_URL=${MAILCOW_API_URL}
+      - MAILCOW_API_KEY=${MAILCOW_API_KEY}
+      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:16-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ../db/migrations:/docker-entrypoint-initdb.d
+    environment:
+      POSTGRES_DB: domain_platform
+      POSTGRES_USER: platform
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U platform"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - certbot_data:/etc/letsencrypt:ro
+    depends_on:
+      - api
+    restart: unless-stopped
+
+  certbot:
+    image: certbot/certbot
+    volumes:
+      - certbot_data:/etc/letsencrypt
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do sleep 12h & wait $${!}; certbot renew; done;'"
+
+volumes:
+  postgres_data:
+  redis_data:
+  certbot_data:

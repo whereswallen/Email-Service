@@ -1,9 +1,9 @@
 {
-  "name": "@email-service/sdk",
-  "version": "0.1.0",
-  "description": "OpenSRS email reseller SDK with DNS verification and Stripe billing",
-  "main": "dist/opensrs-client/index.js",
-  "types": "dist/opensrs-client/index.d.ts",
+  "name": "@domain-platform/sdk",
+  "version": "0.2.0",
+  "description": "Domain & Email Platform SDK -- registration, portfolio, auctions, email reselling",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch"

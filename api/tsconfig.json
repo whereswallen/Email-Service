@@ -9,22 +9,9 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "declaration": true,
-    "declarationMap": true,
     "sourceMap": true,
     "resolveJsonModule": true
   },
-  "include": [
-    "opensrs-client/**/*.ts",
-    "billing/**/*.ts",
-    "types/**/*.ts",
-    "providers/**/*.ts",
-    "dns/**/*.ts",
-    "domain-registration/**/*.ts",
-    "domain-portfolio/**/*.ts",
-    "expired-domains/**/*.ts",
-    "auction/**/*.ts",
-    "email-domain-bridge/**/*.ts",
-    "index.ts"
-  ],
+  "include": ["src/**/*.ts"],
   "exclude": ["node_modules", "dist"]
 }

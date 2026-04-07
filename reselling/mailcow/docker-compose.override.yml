@@ -1,0 +1,41 @@
+# Mailcow reselling override -- apply on top of mailcow-dockerized/docker-compose.yml
+# Usage: docker compose -f docker-compose.yml -f /path/to/this/docker-compose.override.yml up -d
+
+version: "2.1"
+
+services:
+  clamd-mailcow:
+    deploy:
+      resources:
+        limits:
+          memory: 1536M
+
+  rspamd-mailcow:
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+
+  sogo-mailcow:
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+
+  mysql-mailcow:
+    deploy:
+      resources:
+        limits:
+          memory: 1024M
+
+  dovecot-mailcow:
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+
+  postfix-mailcow:
+    deploy:
+      resources:
+        limits:
+          memory: 256M

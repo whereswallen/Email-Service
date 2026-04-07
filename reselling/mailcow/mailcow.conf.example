@@ -1,0 +1,26 @@
+# Mailcow Reselling Configuration
+# Copy to mailcow-dockerized/mailcow.conf after running generate_config.sh
+
+MAILCOW_HOSTNAME=mail.yourbrand.com
+MAILCOW_TZ=America/New_York
+
+# SSL -- Let's Encrypt via Mailcow ACME
+SKIP_LETS_ENCRYPT=n
+ADDITIONAL_SAN=webmail.yourbrand.com,smtp.yourbrand.com,imap.yourbrand.com
+
+# API access
+API_KEY=your-read-write-api-key-here
+API_KEY_READ_ONLY=your-read-only-api-key-here
+API_ALLOW_FROM=127.0.0.1,your-platform-vps-ip
+
+# Solr (full-text search)
+SKIP_SOLR=n
+
+# ClamAV (disable to save RAM if needed)
+SKIP_CLAMD=n
+
+# SOGo (webmail)
+SKIP_SOGO=n
+
+# Compose project name
+COMPOSE_PROJECT_NAME=mailcow-reselling
