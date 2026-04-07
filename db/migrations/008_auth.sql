@@ -1,0 +1,2 @@
+ALTER TABLE customers ADD COLUMN password_hash VARCHAR(255);
+ALTER TABLE customers ADD COLUMN email_verified BOOLEAN DEFAULT FALSE;
