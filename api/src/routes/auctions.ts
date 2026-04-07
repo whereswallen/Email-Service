@@ -3,53 +3,93 @@
  */
 
 import { FastifyInstance } from 'fastify';
+import { AuctionServiceAPI } from '../services/auction-service';
+import { getPool } from '../lib/db';
 
 export default async function auctionRoutes(app: FastifyInstance) {
+  const service = new AuctionServiceAPI(getPool());
+
   // List active auctions
   app.get('/', async (request) => {
-    const { type, sort } = request.query as { type?: string; sort?: string };
-    return { listings: [], filter: { type, sort }, placeholder: true };
+    const { status, page, limit } = request.query as Record<string, string>;
+    if (status && status !== 'active') {
+      return service.getListingsByStatus(status);
+    }
+    return service.getActiveListings({
+      page: parseInt(page || '1', 10),
+      limit: parseInt(limit || '50', 10),
+    });
   });
 
   // Get auction details
   app.get('/:id', async (request) => {
     const { id } = request.params as { id: string };
-    return { id, status: 'active', placeholder: true };
+    return service.getListing(id);
   });
 
   // Create auction listing
-  app.post('/', async (request) => {
-    return { success: true, listingId: '', placeholder: true };
+  app.post('/', { preHandler: [app.authenticate] }, async (request, reply) => {
+    const body = request.body as Record<string, unknown>;
+    body.sellerId = request.user.id;
+    body.status = 'active';
+    body.bidCount = 0;
+    const listing = await service.createListing(body as any);
+    reply.status(201);
+    return listing;
   });
 
   // Place bid
-  app.post('/:id/bid', async (request) => {
+  app.post('/:id/bid', { preHandler: [app.authenticate] }, async (request) => {
     const { id } = request.params as { id: string };
-    const body = request.body as { amount: number; maxBid?: number };
-    return { auctionId: id, success: true, isHighBidder: true, placeholder: true };
+    const { amount, maxBid } = request.body as { amount: number; maxBid?: number };
+    return service.placeBid({
+      auctionId: id,
+      bidderId: request.user.id,
+      amount,
+      maxBid,
+    });
   });
 
   // Get bid history
   app.get('/:id/bids', async (request) => {
     const { id } = request.params as { id: string };
-    return { auctionId: id, bids: [], placeholder: true };
+    return service.getBids(id);
   });
 
-  // Submit offer (for make_offer listings)
-  app.post('/:id/offer', async (request) => {
+  // Submit offer (make_offer listings)
+  app.post('/:id/offer', { preHandler: [app.authenticate] }, async (request, reply) => {
     const { id } = request.params as { id: string };
-    return { listingId: id, success: true, placeholder: true };
+    const { amount, message } = request.body as { amount: number; message?: string };
+    const offer = await service.submitOffer({
+      listingId: id,
+      buyerId: request.user.id,
+      amount,
+      message,
+      status: 'pending',
+      expiresAt: new Date(Date.now() + 7 * 86400000), // 7 days
+    } as any);
+    reply.status(201);
+    return offer;
   });
 
-  // Buy now
-  app.post('/:id/buy', async (request) => {
+  // Get offers for a listing
+  app.get('/:id/offers', { preHandler: [app.authenticate] }, async (request) => {
     const { id } = request.params as { id: string };
-    return { listingId: id, purchased: true, placeholder: true };
+    return service.getOffers(id);
   });
 
-  // Cancel listing (only if no bids)
-  app.delete('/:id', async (request) => {
+  // Respond to offer
+  app.patch('/:id/offers/:offerId', { preHandler: [app.authenticate] }, async (request) => {
+    const { offerId } = request.params as { offerId: string };
+    const { status, counterAmount } = request.body as { status: string; counterAmount?: number };
+    await service.respondToOffer(offerId, status, counterAmount);
+    return { success: true };
+  });
+
+  // Cancel listing (no bids only)
+  app.delete('/:id', { preHandler: [app.authenticate] }, async (request, reply) => {
     const { id } = request.params as { id: string };
-    return { id, cancelled: true, placeholder: true };
+    await service.cancelListing(id, request.user.id);
+    reply.status(204);
   });
 }

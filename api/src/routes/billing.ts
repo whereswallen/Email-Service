@@ -3,27 +3,20 @@
  */
 
 import { FastifyInstance } from 'fastify';
+import { BillingServiceAPI } from '../services/billing-service';
+import { getPool } from '../lib/db';
 
 export default async function billingRoutes(app: FastifyInstance) {
+  const service = new BillingServiceAPI(getPool());
+
   // Get customer subscriptions
-  app.get('/subscriptions', async () => {
-    return { subscriptions: [], placeholder: true };
+  app.get('/subscriptions', { preHandler: [app.authenticate] }, async (request) => {
+    return service.getSubscriptions(request.user.id);
   });
 
   // Get billing history
-  app.get('/transactions', async (request) => {
-    const { type, limit } = request.query as { type?: string; limit?: string };
-    return { transactions: [], filter: { type }, limit: parseInt(limit || '50', 10), placeholder: true };
-  });
-
-  // Get invoices
-  app.get('/invoices', async () => {
-    return { invoices: [], placeholder: true };
-  });
-
-  // Get bundle pricing
-  app.post('/bundle-quote', async (request) => {
-    const body = request.body as { domain: string; mailboxCount: number; provider?: string };
-    return { domain: body.domain, quote: {}, placeholder: true };
+  app.get('/transactions', { preHandler: [app.authenticate] }, async (request) => {
+    const { type } = request.query as { type?: string };
+    return service.getTransactions(request.user.id, type);
   });
 }

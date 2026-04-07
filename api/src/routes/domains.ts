@@ -1,55 +1,80 @@
 /**
- * Domain registration routes.
+ * Domain registration and management routes.
  */
 
 import { FastifyInstance } from 'fastify';
+import { DomainServiceAPI } from '../services/domain-service';
+import { getPool } from '../lib/db';
 
 export default async function domainRoutes(app: FastifyInstance) {
+  const service = new DomainServiceAPI(getPool());
+
   // Check domain availability
   app.get('/check/:domain', async (request) => {
     const { domain } = request.params as { domain: string };
-    // const service = new DomainRegistrationService();
-    // return service.checkAvailability(domain);
-    return { domain, available: true, placeholder: true };
+    return service.checkAvailability(domain);
   });
 
   // Register a domain
-  app.post('/register', async (request) => {
-    const body = request.body as { domain: string; years: number; contact: Record<string, string> };
-    return { domain: body.domain, status: 'pending_registration', placeholder: true };
+  app.post('/register', { preHandler: [app.authenticate] }, async (request, reply) => {
+    const { domain, years, contact } = request.body as { domain: string; years: number; contact: Record<string, string> };
+    const result = await service.register(domain, years || 1, contact, request.user.id);
+    reply.status(201);
+    return result;
+  });
+
+  // List user's domains
+  app.get('/', { preHandler: [app.authenticate] }, async (request) => {
+    const { page, limit } = request.query as Record<string, string>;
+    return service.listDomains(request.user.id, {
+      page: parseInt(page || '1', 10),
+      limit: parseInt(limit || '50', 10),
+    });
   });
 
   // Get domain info
-  app.get('/:domain', async (request) => {
+  app.get('/:domain', { preHandler: [app.authenticate] }, async (request) => {
     const { domain } = request.params as { domain: string };
-    return { domain, status: 'active', placeholder: true };
+    return service.getDomain(domain);
   });
 
-  // Manage DNS records
-  app.get('/:domain/dns', async (request) => {
+  // Get DNS records
+  app.get('/:domain/dns', { preHandler: [app.authenticate] }, async (request) => {
     const { domain } = request.params as { domain: string };
-    return { domain, records: [], placeholder: true };
+    return service.getDNSRecords(domain);
   });
 
-  app.put('/:domain/dns', async (request) => {
+  // Set DNS records
+  app.put('/:domain/dns', { preHandler: [app.authenticate] }, async (request) => {
     const { domain } = request.params as { domain: string };
-    return { domain, success: true, placeholder: true };
+    const { records } = request.body as { records: any[] };
+    await service.setDNSRecords(domain, records);
+    return { success: true };
   });
 
-  // Transfer domain
-  app.post('/transfer', async (request) => {
-    const body = request.body as { domain: string; authCode: string };
-    return { domain: body.domain, status: 'initiated', placeholder: true };
+  // Transfer domain in
+  app.post('/transfer', { preHandler: [app.authenticate] }, async (request) => {
+    const { domain, authCode } = request.body as { domain: string; authCode: string };
+    return service.transfer(domain, authCode);
   });
 
   // Renew domain
-  app.post('/:domain/renew', async (request) => {
+  app.post('/:domain/renew', { preHandler: [app.authenticate] }, async (request) => {
     const { domain } = request.params as { domain: string };
-    return { domain, renewed: true, placeholder: true };
+    return service.renew(domain);
   });
 
-  // List all domains
-  app.get('/', async () => {
-    return { domains: [], placeholder: true };
+  // Set auto-renew
+  app.patch('/:domain/auto-renew', { preHandler: [app.authenticate] }, async (request) => {
+    const { domain } = request.params as { domain: string };
+    const { enabled } = request.body as { enabled: boolean };
+    await service.setAutoRenew(domain, enabled);
+    return { success: true };
+  });
+
+  // Get expiring domains
+  app.get('/expiring/:days', { preHandler: [app.authenticate] }, async (request) => {
+    const { days } = request.params as { days: string };
+    return service.getExpiring(parseInt(days, 10));
   });
 }

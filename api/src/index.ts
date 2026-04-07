@@ -28,6 +28,7 @@ app.register(import('./routes/portfolio'), { prefix: '/api/portfolio' });
 app.register(import('./routes/auctions'), { prefix: '/api/auctions' });
 app.register(import('./routes/email'), { prefix: '/api/email' });
 app.register(import('./routes/billing'), { prefix: '/api/billing' });
+app.register(import('./routes/expired-domains'), { prefix: '/api/expired' });
 
 // Health checks
 app.get('/health', async () => ({ status: 'ok', timestamp: new Date().toISOString() }));
