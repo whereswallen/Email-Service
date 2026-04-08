@@ -18,6 +18,10 @@ export function getQueues() {
     expiredEvaluator: new Queue('expired-evaluator', { connection }),
     renewalChecker: new Queue('renewal-checker', { connection }),
     invoiceGenerator: new Queue('invoice-generator', { connection }),
+
+    // AI queues
+    aiBatchValuator: new Queue('ai-batch-valuator', { connection }),
+    aiDiscoveryEnricher: new Queue('ai-discovery-enricher', { connection }),
   };
 
   return _queues;

@@ -1,7 +1,7 @@
 {
-  "name": "@domain-platform/api",
-  "version": "0.1.0",
-  "description": "Domain & Email Platform API server",
+  "name": "@helix/api",
+  "version": "0.2.0",
+  "description": "Helix — AI-Powered Domain Investing Platform API",
   "main": "dist/src/index.js",
   "scripts": {
     "build": "tsc",
@@ -9,6 +9,7 @@
     "start": "node dist/src/index.js"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.85.0",
     "@fastify/cors": "^10.0.0",
     "@fastify/jwt": "^9.0.0",
     "@fastify/rate-limit": "^10.0.0",

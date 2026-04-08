@@ -1,7 +1,7 @@
 {
-  "name": "@domain-platform/sdk",
-  "version": "0.2.0",
-  "description": "Domain & Email Platform SDK -- registration, portfolio, auctions, email reselling",
+  "name": "@helix/sdk",
+  "version": "0.3.0",
+  "description": "Helix SDK — AI-powered domain investing, portfolio, auctions, email reselling",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {

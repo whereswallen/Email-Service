@@ -12,6 +12,8 @@ import { processAuctionCloser } from './processors/auction-closer';
 import { processExpiredScanner } from './processors/expired-scanner';
 import { processExpiredEvaluator } from './processors/expired-evaluator';
 import { processRenewalChecker } from './processors/renewal-checker';
+import { processAIBatchValuation } from './processors/ai-batch-valuator';
+import { processAIDiscoveryEnrich } from './processors/ai-discovery-enricher';
 
 loadConfig();
 
@@ -37,6 +39,18 @@ function createWorkers() {
     }),
 
     new Worker('renewal-checker', processRenewalChecker, {
+      connection,
+      concurrency: 1,
+    }),
+
+    // AI workers (concurrency 1 to control Claude API rate)
+    new Worker('ai-batch-valuator', processAIBatchValuation, {
+      connection,
+      concurrency: 1,
+      limiter: { max: 10, duration: 60000 },
+    }),
+
+    new Worker('ai-discovery-enricher', processAIDiscoveryEnrich, {
       connection,
       concurrency: 1,
     })

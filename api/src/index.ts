@@ -1,5 +1,6 @@
 /**
- * Domain Investing Platform -- Fastify API server.
+ * Helix — AI-Powered Domain Investing Platform
+ * Fastify API server
  */
 
 import Fastify from 'fastify';
@@ -33,6 +34,9 @@ app.register(import('./routes/auctions'), { prefix: '/api/auctions' });
 app.register(import('./routes/email'), { prefix: '/api/email' });
 app.register(import('./routes/billing'), { prefix: '/api/billing' });
 app.register(import('./routes/expired-domains'), { prefix: '/api/expired' });
+
+// AI features (authenticated)
+app.register(import('./routes/ai'), { prefix: '/api/ai' });
 
 // WHOIS lookup (public, rate-limited)
 app.register(import('./routes/whois'), { prefix: '/api/whois' });

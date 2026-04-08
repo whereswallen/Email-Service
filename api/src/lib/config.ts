@@ -15,6 +15,8 @@ export interface AppConfig {
   opensrsApiKey: string;
   opensrsApiUrl: string;
   opensrsRegistrarUrl: string;
+  anthropicApiKey: string;
+  anthropicDefaultModel: string;
   nodeEnv: string;
 }
 
@@ -47,6 +49,8 @@ export function loadConfig(): AppConfig {
     opensrsApiKey: optionalEnv('OPENSRS_API_KEY', ''),
     opensrsApiUrl: optionalEnv('OPENSRS_API_URL', 'https://admin.hostedemail.com/api'),
     opensrsRegistrarUrl: optionalEnv('OPENSRS_REGISTRAR_URL', 'https://rr-n1-tor.opensrs.net:55443'),
+    anthropicApiKey: optionalEnv('ANTHROPIC_API_KEY', ''),
+    anthropicDefaultModel: optionalEnv('ANTHROPIC_DEFAULT_MODEL', 'claude-haiku-4-5-20251001'),
     nodeEnv: optionalEnv('NODE_ENV', 'development'),
   };
 

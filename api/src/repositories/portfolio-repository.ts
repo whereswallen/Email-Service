@@ -63,20 +63,73 @@ export class PortfolioRepository extends BaseRepository<PortfolioEntryRow> {
     );
   }
 
-  async getAnalytics(): Promise<{
+  async getAnalytics(customerId?: string): Promise<{
     totalDomains: number;
     totalInvested: number;
     totalEstimatedValue: number;
     annualRenewalBurn: number;
+    unrealizedPnL: number;
+    roiPercent: number;
+    expiringIn30Days: number;
+    expiringIn60Days: number;
+    expiringIn90Days: number;
+    byPurpose: Record<string, number>;
+    byTld: Record<string, number>;
   }> {
+    const where = customerId
+      ? 'JOIN domains d ON pe.domain_id = d.id WHERE d.customer_id = $1'
+      : '';
+    const params = customerId ? [customerId] : [];
+
     const result = await this.pool.query(`
       SELECT
         COUNT(*)::int AS total_domains,
-        COALESCE(SUM(acquisition_cost), 0)::float AS total_invested,
-        COALESCE(SUM(estimated_value), 0)::float AS total_estimated_value,
-        COALESCE(SUM(annual_renewal_cost), 0)::float AS annual_renewal_burn
-      FROM portfolio_entries
-    `);
-    return toCamel(result.rows[0]);
+        COALESCE(SUM(pe.acquisition_cost), 0)::float AS total_invested,
+        COALESCE(SUM(pe.estimated_value), 0)::float AS total_estimated_value,
+        COALESCE(SUM(pe.annual_renewal_cost), 0)::float AS annual_renewal_burn
+      FROM portfolio_entries pe ${where}
+    `, params);
+
+    const row = result.rows[0];
+    const totalInvested = parseFloat(row.total_invested) || 0;
+    const totalEstimatedValue = parseFloat(row.total_estimated_value) || 0;
+    const unrealizedPnL = totalEstimatedValue - totalInvested;
+    const roiPercent = totalInvested > 0 ? (unrealizedPnL / totalInvested) * 100 : 0;
+
+    return {
+      totalDomains: parseInt(row.total_domains) || 0,
+      totalInvested,
+      totalEstimatedValue,
+      annualRenewalBurn: parseFloat(row.annual_renewal_burn) || 0,
+      unrealizedPnL,
+      roiPercent,
+      expiringIn30Days: 0,
+      expiringIn60Days: 0,
+      expiringIn90Days: 0,
+      byPurpose: {},
+      byTld: {},
+    };
+  }
+
+  async getTopByValue(customerId: string, limit: number = 20): Promise<PortfolioEntryRow[]> {
+    const result = await this.pool.query(
+      `SELECT pe.* FROM portfolio_entries pe
+       JOIN domains d ON pe.domain_id = d.id
+       WHERE d.customer_id = $1
+       ORDER BY pe.estimated_value DESC NULLS LAST LIMIT $2`,
+      [customerId, limit]
+    );
+    return mapRows<PortfolioEntryRow>(result.rows);
+  }
+
+  async getExpiring(customerId: string, days: number = 90): Promise<PortfolioEntryRow[]> {
+    const result = await this.pool.query(
+      `SELECT pe.* FROM portfolio_entries pe
+       JOIN domains d ON pe.domain_id = d.id
+       WHERE d.customer_id = $1 AND d.expires_at <= NOW() + INTERVAL '1 day' * $2
+       ORDER BY d.expires_at ASC`,
+      [customerId, days]
+    );
+    return mapRows<PortfolioEntryRow>(result.rows);
   }
 }
