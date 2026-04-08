@@ -40,7 +40,7 @@ export function loadConfig(): AppConfig {
     host: optionalEnv('HOST', '0.0.0.0'),
     databaseUrl: requireEnv('DATABASE_URL'),
     redisUrl: optionalEnv('REDIS_URL', 'redis://localhost:6379'),
-    jwtSecret: requireEnv('JWT_SECRET'),
+    jwtSecret: optionalEnv('JWT_SECRET', 'dev-secret-change-in-production'),
     stripeSecretKey: optionalEnv('STRIPE_SECRET_KEY', ''),
     stripeWebhookSecret: optionalEnv('STRIPE_WEBHOOK_SECRET', ''),
     opensrsApiUser: optionalEnv('OPENSRS_API_USER', ''),

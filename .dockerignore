@@ -1,0 +1,10 @@
+node_modules
+api/node_modules
+sdk/node_modules
+sdk/dist
+api/dist
+.git
+*.md
+standalone
+personal
+docs

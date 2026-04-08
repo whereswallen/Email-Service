@@ -1,8 +1,8 @@
-version: "3.8"
-
 services:
   api:
-    build: ../api
+    build:
+      context: ..
+      dockerfile: api/Dockerfile
     ports:
       - "3000:3000"
     depends_on:
@@ -25,7 +25,9 @@ services:
     restart: unless-stopped
 
   worker:
-    build: ../api
+    build:
+      context: ..
+      dockerfile: api/Dockerfile
     command: ["node", "dist/src/jobs/worker.js"]
     depends_on:
       postgres:
